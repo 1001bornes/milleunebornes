@@ -38,10 +38,16 @@ export function RandonneursTable({ randonneurs, typeRandonneurs, nameSearch }:
 
   function createCsvContent(randonneurs: SelectRandonneur[]) {
     const csvContent = "data:text/csv;charset=utf-8," +
-      "Nom,Prénom,No Tél\n" +
+      '"Nom","Prénom","No Tél"\n' +
       randonneurs.map(randonneur =>
-        `"${randonneur.nom},${randonneur.prenom},${randonneur.no_tel}"`
-      ).join("\n");
+        [
+          randonneur.nom,
+          randonneur.prenom,
+          randonneur.no_tel
+        ]
+          .map(str => str == null ? "" : `"${str.replace(/"/g, '"')}"`)
+          .join(","))
+        .join("\n");
     console.log(csvContent);
     return encodeURI(csvContent);
   }
@@ -49,9 +55,8 @@ export function RandonneursTable({ randonneurs, typeRandonneurs, nameSearch }:
   function downloadCSV() {
     console.log("downloadCSV");
     const csvContent = createCsvContent(randonneurs);
-    const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", csvContent);
     link.setAttribute("download", "randonneurs.csv");
     document.body.appendChild(link);
     link.click();
