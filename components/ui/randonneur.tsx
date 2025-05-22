@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,32 +8,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { SelectProduct } from '@/lib/db';
-import { deleteProduct } from './actions';
+import { SelectRandonneur } from '@/lib/db';
+import { deleteProduct } from '@/components/ui/actions';
+import { ProfileImage } from '@/components/ui/profile-image';
 
-export function Product({ product }: { product: SelectProduct }) {
+export function Randonneur({ randonneur }: Readonly<{ randonneur: SelectRandonneur }>) {
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        <Image
-          alt="Product image"
-          className="aspect-square rounded-md object-cover"
-          height="64"
-          src={product.imageUrl}
-          width="64"
-        />
+        <ProfileImage url_photo={randonneur.url_photo} nom={randonneur.nom} prenom={randonneur.prenom}/>
       </TableCell>
-      <TableCell className="font-medium">{product.name}</TableCell>
-      <TableCell>
-        <Badge variant="outline" className="capitalize">
-          {product.status}
-        </Badge>
-      </TableCell>
-      <TableCell className="hidden md:table-cell">{`$${product.price}`}</TableCell>
-      <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
-      <TableCell className="hidden md:table-cell">
-        {product.availableAt.toLocaleDateString("en-US")}
-      </TableCell>
+      <TableCell className="font-medium capitalize">{randonneur.nom}</TableCell>
+      <TableCell className="font-medium">{randonneur.prenom}</TableCell>
+      <TableCell className="font-medium">{randonneur.no_tel}</TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

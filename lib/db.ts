@@ -1,74 +1,85 @@
 import 'server-only';
 
-import { neon } from '@neondatabase/serverless';
 import {
   pgTable,
   text,
-  numeric,
-  integer,
+  boolean,
   timestamp,
   pgEnum,
   serial
 } from 'drizzle-orm/pg-core';
-import { count, eq, ilike } from 'drizzle-orm';
+import { eq, ilike, and, SQL } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres'
+import { RandonneurQuery } from './randonneurQuery';
 
 const sql = postgres(process.env.POSTGRES_URL!);
 export const db = drizzle(sql);
 
-export const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);
+export const fonctionsCaEnum = pgEnum('fonctions_ca',
+  ['Président',
+    'Vice-Président',
+    'Trésorier',
+    'Vice-Trésorier',
+    'Secrétaire',
+    'Administrateur'
+  ]);
 
-export const products = pgTable('products', {
+export const randonneurs = pgTable('randonneurs', {
   id: serial('id').primaryKey(),
-  imageUrl: text('image_url').notNull(),
-  name: text('name').notNull(),
-  status: statusEnum('status').notNull(),
-  price: numeric('price', { precision: 10, scale: 2 }).notNull(),
-  stock: integer('stock').notNull(),
-  availableAt: timestamp('available_at').notNull()
+    create_time: timestamp('create_time').defaultNow(),
+    nom: text('nom').notNull(),
+    prenom: text('prenom').notNull(),
+    is_actif: boolean('is_actif').notNull(),
+    is_animateur: boolean('is_animateur').notNull(),
+    is_CA: boolean('is_ca').notNull(),
+    fonction_CA: fonctionsCaEnum('fonction_ca').notNull(),
+    url_photo: text('url_photo').notNull(),
+    no_tel: text('no_tel').notNull()
 });
 
-export type SelectProduct = typeof products.$inferSelect;
-export const insertProductSchema = createInsertSchema(products);
-
-export async function getProducts(
-  search: string,
-  offset: number
+export type SelectRandonneur = typeof randonneurs.$inferSelect;
+export const insertRandonneurSchema = createInsertSchema(randonneurs);
+export async function getRandonneurs(
+  query: RandonneurQuery,
+  offset: number,
+  randonneursPerPage: number
 ): Promise<{
-  products: SelectProduct[];
-  newOffset: number | null;
-  totalProducts: number;
+  randonneurs: SelectRandonneur[];
 }> {
+  const filters: SQL[] = [];
+  filters.push(eq(randonneurs.is_actif, true));
+  if (query.search) filters.push(ilike(randonneurs.nom, `%${query.search}%`));
+  if (query.randonneurType === 'CA') filters.push(eq(randonneurs.is_CA, true));
+  if (query.randonneurType === 'animateurs') filters.push(eq(randonneurs.is_animateur, true));
   // Always search the full table, not per page
-  if (search) {
+  if (query.search) {
     return {
-      products: await db
-        .select()
-        .from(products)
-        .where(ilike(products.name, `%${search}%`))
+      randonneurs: await db.select()
+        .from(randonneurs)
+        .where(and(...filters))
+        .orderBy(randonneurs.nom)
         .limit(1000),
-      newOffset: null,
-      totalProducts: 0
     };
   }
 
   if (offset === null) {
-    return { products: [], newOffset: null, totalProducts: 0 };
+    return { randonneurs: []};
   }
 
-  let totalProducts = await db.select({ count: count() }).from(products);
-  let moreProducts = await db.select().from(products).limit(5).offset(offset);
-  let newOffset = moreProducts.length >= 5 ? offset + 5 : null;
+  let moreRandonneurs = await db.select()
+      .from(randonneurs)
+      .where(and(...filters))
+      .orderBy(randonneurs.nom)
+      .offset(offset)
+      .limit(randonneursPerPage);
 
   return {
-    products: moreProducts,
-    newOffset,
-    totalProducts: totalProducts[0].count
+    randonneurs: moreRandonneurs
   };
 }
 
 export async function deleteProductById(id: number) {
-  await db.delete(products).where(eq(products.id, id));
+  await db.delete(randonneurs).where(eq(randonneurs.id, id));
 }

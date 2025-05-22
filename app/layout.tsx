@@ -1,15 +1,9 @@
-import { Home, Link,  PanelLeft, Scale, Settings, Sheet, Footprints, Users2, BadgeInfo } from 'lucide-react';
-import { NavItem } from '@/components/ui/nav-item';
-import Providers from './(dashboard)/providers';
-import { SearchInput } from './(dashboard)/search';
 import './globals.css';
-import Image from 'next/image';
 
-import { Analytics } from '@vercel/analytics/react';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@radix-ui/react-tooltip';
+import { Home, Scale, Settings, Footprints, Users2, BadgeInfo } from 'lucide-react';
+import { NavItem } from '@/components/ui/nav-item';
+import Providers from '@/components/ui/providers';
+import Image from 'next/image';
 
 export const metadata = {
   title: '1001 bornes',
@@ -17,11 +11,7 @@ export const metadata = {
     "Site de l'association 1001 bornes."
 };
 
-export default function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
       <body className="flex min-h-screen w-full flex-col">
@@ -34,14 +24,12 @@ export default function RootLayout({
                   Mille et une bornes
                 </div>
                 {/* <MobileNav /> */}
-                {/* <SearchInput /> */}
                 {/* <User /> */}
               </header>
               <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
                 {children}
               </main>
             </div>
-            <Analytics />
           </main>
         </Providers>
       </body>

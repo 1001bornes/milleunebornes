@@ -1,4 +1,14 @@
 export default {
+   async redirects() {
+    return [
+      // Basic redirect
+      {
+        source: '/',
+        destination: '/randonneurs',
+        permanent: true,
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {

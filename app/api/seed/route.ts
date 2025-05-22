@@ -1,9 +1,9 @@
-import { db, products } from 'lib/db';
+import { db, randonneurs } from 'lib/db';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  await db.insert(products).values([
+  await db.insert(randonneurs).values([
     {
       id: 1,
       imageUrl:
