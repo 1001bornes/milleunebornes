@@ -14,9 +14,9 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Randonneur } from '@/components/ui/randonneur';
+import { Randonneur } from '@/components/ui/randonneurs/randonneur';
 import { SearchInput } from '@/components/ui/search';
-import { SelectRandonneur } from '@/lib/db';
+import { SelectRandonneur } from '@/lib/randonneursDb';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
@@ -53,11 +53,10 @@ export function RandonneursTable({ randonneurs, typeRandonneurs, nameSearch }:
   }
 
   function downloadCSV() {
-    console.log("downloadCSV");
     const csvContent = createCsvContent(randonneurs);
     const link = document.createElement("a");
     link.setAttribute("href", csvContent);
-    link.setAttribute("download", "randonneurs.csv");
+    link.setAttribute("download", pageTitle + ".csv");
     document.body.appendChild(link);
     link.click();
   };

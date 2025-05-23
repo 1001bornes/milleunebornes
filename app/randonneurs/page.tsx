@@ -1,6 +1,5 @@
-import { RandonneursTable } from '@/components/ui/randonneurs-table';
-import { RandonneurQuery } from '@/lib/randonneurQuery';
-import { getRandonneurs } from '@/lib/db';
+import { RandonneursTable } from '@/components/ui/randonneurs/randonneurs-table';
+import { RandonneursFilter, getRandonneurs } from '@/lib/randonneursDb';
 
 export default async function RandonneursPage(
   props: Readonly<{
@@ -11,7 +10,7 @@ export default async function RandonneursPage(
   const nameSearch = searchParams.q ?? null;
     let randonneursPerPage = 1000;
     let requestedOffset: number = 0;
-    const randonneurQuery :RandonneurQuery = {
+    const randonneurQuery :RandonneursFilter = {
             search: nameSearch,
             randonneurType: 'all'
           };

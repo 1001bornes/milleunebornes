@@ -4,7 +4,7 @@ export default {
       // Basic redirect
       {
         source: '/',
-        destination: '/randonneurs',
+        destination: '/randonnees',
         permanent: true,
       },
     ]

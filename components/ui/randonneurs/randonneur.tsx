@@ -8,8 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { SelectRandonneur } from '@/lib/db';
-import { deleteProduct } from '@/components/ui/actions';
+import { SelectRandonneur } from '@/lib/randonneursDb';
 import { ProfileImage } from '@/components/ui/profile-image';
 
 export function Randonneur({ randonneur }: Readonly<{ randonneur: SelectRandonneur }>) {
@@ -32,11 +31,11 @@ export function Randonneur({ randonneur }: Readonly<{ randonneur: SelectRandonne
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>
-              <form action={deleteProduct}>
+            {/*<DropdownMenuItem>
+              <form action={deleteRandonneur}>
                 <button type="submit">Delete</button>
               </form>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
