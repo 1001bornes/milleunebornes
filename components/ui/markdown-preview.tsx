@@ -1,6 +1,4 @@
 import './markdown.css';
-import fs from 'fs';
-import path from 'path';
 import { renderMarkdownToHTML } from '@/lib/markdown';
 
 async function createInnerHtmlForMarkdown(filePath: string):Promise< { __html: string } >{

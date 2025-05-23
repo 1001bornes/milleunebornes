@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/icons';
 import { Search } from 'lucide-react';
 
-export function SearchInput({searchTerm}: Readonly<{searchTerm: string}>) {
+export function SearchInput({searchTerm}:
+   Readonly<{searchTerm: string}>) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
