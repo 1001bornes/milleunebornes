@@ -10,17 +10,8 @@ import {
   integer,
   boolean
 } from 'drizzle-orm/pg-core';
-import { eq, ilike, and, SQL, count } from 'drizzle-orm';
+import { eq, ilike, and, SQL, count, inArray } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-
-export class RandonneesFilter {
-  search: string | null;
-  randonneurType: string;
-  constructor() {
-    this.search = null;
-    this.randonneurType = 'all';
-  }
-};
 
 export const statutsRando = pgEnum('statuts_rando',
   [
@@ -29,6 +20,17 @@ export const statutsRando = pgEnum('statuts_rando',
     'Programmée',
     'Terminée'
   ]);
+
+  export const statutsRandoValues = statutsRando.enumValues;
+export class RandonneesFilter {
+  search: string | null;
+  randonneesStatuts: string[];
+  constructor() {
+    this.search = null;
+    this.randonneesStatuts = ['Programmée', 'A reconnaître', 'Terminée'];
+  }
+};
+
 
 export const randonnees = pgTable('randonnees', {
   id: serial('id').primaryKey(),
@@ -52,19 +54,16 @@ export const randonnees = pgTable('randonnees', {
 
 export type SelectRandonnee = typeof randonnees.$inferSelect;
 export const insertRandonneeSchema = createInsertSchema(randonnees);
-export async function getRandonnees(
-  query: RandonneesFilter,
-  pageNumber: number,
-  randonneesPerPage: number
-): Promise<{
+export async function getRandonnees( query: RandonneesFilter, pageNumber: number, randonneesPerPage: number):
+ Promise<{
   randonnees: SelectRandonnee[];
   totalPages: number;
 }> {
   const filters: SQL[] = [];
   if (query.search) filters.push(ilike(randonnees.description, `%${query.search}%`));
-  // if (query.randonneurType === 'CA') filters.push(eq(randonnees.is_CA, true));
-  // if (query.randonneurType === 'animateurs') filters.push(eq(randonnees.is_animateur, true));
-  // Always search the full table, not per page
+  if (query.randonneesStatuts.length > 0) {
+    filters.push(inArray(randonnees.statut, convertToStatutEnum(query.randonneesStatuts)));
+  }
   if (query.search) {
     return {
       randonnees: await db.select()
@@ -89,7 +88,6 @@ export async function getRandonnees(
   let totalRandonnees = await db.select( {count: count()  })
     .from(randonnees)
     .where(and(...filters))
-
   return {
     randonnees: moreRandonnees,
     totalPages: Math.ceil(totalRandonnees[0].count / randonneesPerPage)
@@ -100,3 +98,11 @@ export async function getRandonnees(
 export async function deleteRandonneeById(id: number) {
   await db.delete(randonnees).where(eq(randonnees.id, id));
 }
+function convertToStatutEnum(randonneesStatuts: string[]): import("drizzle-orm").SQLWrapper | ("A concevoir" | "A reconnaître" | "Programmée" | "Terminée" | import("drizzle-orm").Placeholder<string, any>)[] {
+  return randonneesStatuts.map((statut) => {
+    if (statutsRandoValues.includes(statut as any)) {
+      return statut as any;
+    }
+  });
+}
+

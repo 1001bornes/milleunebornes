@@ -1,4 +1,3 @@
-"use client";
 import {
   TableHead,
   TableRow,
@@ -16,71 +15,43 @@ import {
 } from '@/components/ui/card';
 import { Randonnee } from '@/components/ui/randonnees/randonnee';
 import { SearchInput } from '@/components/ui/search';
-import { SelectRandonnee } from '@/lib/randonneesDb';
+import { getRandonnees, RandonneesFilter } from '@/lib/randonneesDb';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import Pagination from '../pagination';
+import { ExportRandonnees } from './export-randonnees';
+import Link from 'next/link';
 
-export function RandonneesTable({ randonnees, typeRandonneurs, nameSearch, totalPages }:
-  Readonly<{ randonnees: SelectRandonnee[]; typeRandonneurs: string; nameSearch: string; totalPages: number; }>) {
+export async function RandonneesTable({ randonneesFilter, currentPage, randonneesPerPage }:
+  Readonly<{ randonneesFilter: RandonneesFilter; currentPage: number; randonneesPerPage: number; }>) {
 
-  function getPageTitle(typeRandonneurs: string) {
-    switch (typeRandonneurs) {
-      case 'CA':
-        return "membres du conseil d'administration";
-      case 'animateurs':
-        return 'animateurs';
-      case 'all':
-        return 'randonnées';
-      default:
-        return 'Tous les randonnées';
-    };
+  const { randonnees, totalPages } = await getRandonnees(
+    randonneesFilter,
+    currentPage,
+    randonneesPerPage
+  );
+
+  function getPageTitle(typeRandonnees: string[]) {
+    return typeRandonnees.join(', ');
   }
 
-  function createCsvContent(randonnees: SelectRandonnee[]) {
-    const csvContent = "data:text/csv;charset=utf-8," +
-      '"Nom","Prénom","No Tél"\n' +
-      randonnees.map(randonnee =>
-        [
-          randonnee.description,
-          // randonnee.prenom,
-          // randonnee.no_tel
-        ]
-          .map(str => str == null ? "" : `"${str.replace(/"/g, '"')}"`)
-          .join(","))
-        .join("\n");
-    console.log(csvContent);
-    return encodeURI(csvContent);
-  }
-
-  function downloadCSV() {
-    const csvContent = createCsvContent(randonnees);
-    const link = document.createElement("a");
-    link.setAttribute("href", csvContent);
-    link.setAttribute("download", pageTitle + ".csv");
-    document.body.appendChild(link);
-    link.click();
-  };
-
-  const pageTitle = getPageTitle(typeRandonneurs);
+  const pageTitle = getPageTitle(randonneesFilter.randonneesStatuts);
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center">
           <CardTitle className="text-transform: capitalize">{pageTitle}</CardTitle>
-          <SearchInput searchTerm={nameSearch} />
+          <SearchInput searchTerm={randonneesFilter.search ?? ''} />
           <div className="ml-auto flex items-center gap-2">
-            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={downloadCSV}>
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Export
-              </span>
-            </Button>
-            <Button size="sm" className="h-8 gap-1">
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Ajouter une randonnée
-              </span>
-            </Button>
+            <ExportRandonnees filename={pageTitle} randonnees={randonnees} />
+            <Link href="/randonnees/create" className="no-underline">
+              <Button size="sm" className="h-8 gap-1">
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Ajouter une randonnée
+                </span>
+              </Button>
+            </Link>
           </div>
         </div>
         <CardDescription>

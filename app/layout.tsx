@@ -50,7 +50,7 @@ function DesktopNav() {
         <NavItem href="/randonnees" label="Randonnées">
           <Footprints className="h-5 w-5" />
         </NavItem>
-        <NavItem href="/animateurs" label="Animateurs">
+        <NavItem href="/randonneurs?type=animateurs" label="Animateurs">
           <Users2 className="h-5 w-5" />
         </NavItem>
         <NavItem href="/qui-sommes-nous" label="Qui sommes nous ?">

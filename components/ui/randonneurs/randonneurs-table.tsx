@@ -1,4 +1,3 @@
-"use client";
 import {
   TableHead,
   TableRow,
@@ -16,13 +15,20 @@ import {
 } from '@/components/ui/card';
 import { Randonneur } from '@/components/ui/randonneurs/randonneur';
 import { SearchInput } from '@/components/ui/search';
-import { SelectRandonneur } from '@/lib/randonneursDb';
+import { getRandonneurs, RandonneursFilter } from '@/lib/randonneursDb';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
+import { ExportRandonneurs } from './export-randonneurs';
 
-export function RandonneursTable({ randonneurs, typeRandonneurs, nameSearch }:
-  Readonly<{ randonneurs: SelectRandonneur[]; typeRandonneurs: string; nameSearch: string }>) {
-
+export async function RandonneursTable({ randonneursFilter, currentPage,  randonneursPerPage } :
+  Readonly<{randonneursFilter: RandonneursFilter; currentPage: number; randonneursPerPage: number}>) {
+        const { randonneurs } = await getRandonneurs(
+          randonneursFilter,
+          currentPage,
+          randonneursPerPage
+        );
+      
+    
   function getPageTitle(typeRandonneurs: string) {
     switch (typeRandonneurs) {
       case 'CA':
@@ -36,44 +42,15 @@ export function RandonneursTable({ randonneurs, typeRandonneurs, nameSearch }:
     };
   }
 
-  function createCsvContent(randonneurs: SelectRandonneur[]) {
-    const csvContent = "data:text/csv;charset=utf-8," +
-      '"Nom","Prénom","No Tél"\n' +
-      randonneurs.map(randonneur =>
-        [
-          randonneur.nom,
-          randonneur.prenom,
-          randonneur.no_tel
-        ]
-          .map(str => str == null ? "" : `"${str.replace(/"/g, '"')}"`)
-          .join(","))
-        .join("\n");
-    console.log(csvContent);
-    return encodeURI(csvContent);
-  }
-
-  function downloadCSV() {
-    const csvContent = createCsvContent(randonneurs);
-    const link = document.createElement("a");
-    link.setAttribute("href", csvContent);
-    link.setAttribute("download", pageTitle + ".csv");
-    document.body.appendChild(link);
-    link.click();
-  };
-
-  const pageTitle = getPageTitle(typeRandonneurs);
+  const pageTitle = getPageTitle(randonneursFilter.randonneurType);
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center">
           <CardTitle className="text-transform: capitalize">{pageTitle}</CardTitle>
-          <SearchInput searchTerm={nameSearch} />
+          <SearchInput searchTerm={randonneursFilter.search?? ''} />
           <div className="ml-auto flex items-center gap-2">
-            <Button size="sm" variant="outline" className="h-8 gap-1" onClick={downloadCSV}>
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Export
-              </span>
-            </Button>
+            <ExportRandonneurs filename={pageTitle} randonneurs={randonneurs} />
             <Button size="sm" className="h-8 gap-1">
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">

@@ -1,5 +1,5 @@
 import { RandonneesTable } from '@/components/ui/randonnees/randonnees-table';
-import { RandonneesFilter, getRandonnees } from '@/lib/randonneesDb';
+import { RandonneesFilter } from '@/lib/randonneesDb';
 
 export default async function RandonneursPage(
   props: Readonly<{
@@ -10,23 +10,17 @@ export default async function RandonneursPage(
   const nameSearch = searchParams.q ?? null;
   const currentPage = Number(searchParams.page) || 1;
 
-    let randonneursPerPage = 5;
-    const randonneesQuery :RandonneesFilter = {
-            search: nameSearch,
-            randonneurType: 'all'
-          };
-    const { randonnees, totalPages } = await getRandonnees(
-      randonneesQuery,
-      currentPage,
-      randonneursPerPage
-    );
-  
+  let randonneesPerPage = 5;
+  const randonneesFilter: RandonneesFilter = {
+    search: nameSearch,
+    randonneesStatuts: ['Programmée', 'A reconnaître', 'Terminée']
+  };
+
   return (
-        <RandonneesTable
-          randonnees={randonnees}
-          typeRandonneurs={randonneesQuery.randonneurType}
-          nameSearch={nameSearch?? ''}
-          totalPages={totalPages}
-        />
+    <RandonneesTable
+      randonneesFilter={randonneesFilter}
+      currentPage={currentPage}
+      randonneesPerPage={randonneesPerPage}
+    />
   );
 }

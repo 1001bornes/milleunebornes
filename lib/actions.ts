@@ -8,4 +8,3 @@ export async function deleteRandonnee(formData: FormData) {
   await deleteRandonneeById(id);
   revalidatePath('/');
 }
-

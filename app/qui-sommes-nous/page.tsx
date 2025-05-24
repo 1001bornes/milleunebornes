@@ -1,12 +1,14 @@
 import * as React from "react";
 import { Tabs } from "radix-ui";
 import MarkdownPreview from "@/components/ui/markdown-preview";
+import { RandonneursTable } from "@/components/ui/randonneurs/randonneurs-table";
 
 export default async function WhoAreWe() {
     const tabsStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm";
     const tabsContentStyle = "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
     return (
         <main>
+            <h1 className="mb-4 text-2xl font-bold">Qui sommes-nous ?</h1>
             <Tabs.Root defaultValue="association" orientation="vertical">
                 <Tabs.List aria-label="Qui sommes nous" className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
                     <Tabs.Trigger value="association" className={tabsStyle}>L'association</Tabs.Trigger>
@@ -18,8 +20,12 @@ export default async function WhoAreWe() {
                     <MarkdownPreview filename="public/qui-sommes-nous/association.md" />
                 </Tabs.Content>
                 <Tabs.Content value="bureau-CA" className={tabsContentStyle}>
-                        Tab two content
-                    </Tabs.Content>
+                    <RandonneursTable
+                        randonneursFilter={{ randonneurType: 'CA', search: '' }}
+                        currentPage={1}
+                        randonneursPerPage={10}
+                    />
+                </Tabs.Content>
                 <Tabs.Content value="statuts" className={tabsContentStyle}>
                     <MarkdownPreview filename="public/qui-sommes-nous/statuts.md" />
                 </Tabs.Content>
