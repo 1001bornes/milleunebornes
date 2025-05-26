@@ -21,7 +21,7 @@ export const statutsRando = pgEnum('statuts_rando',
     'Terminée'
   ]);
 
-  export const statutsRandoValues = statutsRando.enumValues;
+export const statutsRandoValues = statutsRando.enumValues;
 export class RandonneesFilter {
   search: string | null;
   randonneesStatuts: string[];
@@ -53,12 +53,13 @@ export const randonnees = pgTable('randonnees', {
 });
 
 export type SelectRandonnee = typeof randonnees.$inferSelect;
+export type InsertRandonnee = typeof randonnees.$inferInsert;
 export const insertRandonneeSchema = createInsertSchema(randonnees);
-export async function getRandonnees( query: RandonneesFilter, pageNumber: number, randonneesPerPage: number):
- Promise<{
-  randonnees: SelectRandonnee[];
-  totalPages: number;
-}> {
+export async function getRandonnees(query: RandonneesFilter, pageNumber: number, randonneesPerPage: number):
+  Promise<{
+    randonnees: SelectRandonnee[];
+    totalPages: number;
+  }> {
   const filters: SQL[] = [];
   if (query.search) filters.push(ilike(randonnees.description, `%${query.search}%`));
   if (query.randonneesStatuts.length > 0) {
@@ -71,21 +72,21 @@ export async function getRandonnees( query: RandonneesFilter, pageNumber: number
         .where(and(...filters))
         .orderBy(randonnees.create_time)
         .limit(1000),
-        totalPages: 1
+      totalPages: 1
     };
   }
 
   if (pageNumber === null) {
-    return { randonnees: [] , totalPages: 0};
+    return { randonnees: [], totalPages: 0 };
   }
 
   let moreRandonnees = await db.select()
     .from(randonnees)
     .where(and(...filters))
     .orderBy(randonnees.create_time)
-    .offset((pageNumber-1)*randonneesPerPage)
+    .offset((pageNumber - 1) * randonneesPerPage)
     .limit(randonneesPerPage);
-  let totalRandonnees = await db.select( {count: count()  })
+  let totalRandonnees = await db.select({ count: count() })
     .from(randonnees)
     .where(and(...filters))
   return {
