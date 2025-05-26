@@ -10,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { eq, ilike, and, SQL } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
+import { SelectUser, users } from "./schema";
 
 export class RandonneursFilter {
   search: string | null;
@@ -30,17 +31,19 @@ export const fonctionsCaEnum = pgEnum('fonctions_ca',
     'Administrateur'
   ]);
 
-export const randonneurs = pgTable('randonneurs', {
-  id: serial('id').primaryKey(),
+export const randonneurs = pgTable('user', {
+  id: text('id').primaryKey(),
   create_time: timestamp('create_time').defaultNow(),
-  nom: text('nom').notNull(),
-  prenom: text('prenom').notNull(),
+  nom: text('name').notNull(),
+  email: text('email').notNull(),
+  password: text('password').notNull(),
   is_actif: boolean('is_actif').notNull(),
   is_animateur: boolean('is_animateur').notNull(),
-  is_CA: boolean('is_ca').notNull(),
+  is_CA: boolean('is_CA').notNull(),
   fonction_CA: fonctionsCaEnum('fonction_ca').notNull(),
   url_photo: text('url_photo').notNull(),
-  no_tel: text('no_tel').notNull()
+  no_tel: text('no_tel').notNull(),
+  image: text("image")
 });
 
 export type SelectRandonneur = typeof randonneurs.$inferSelect;
@@ -84,6 +87,32 @@ export async function getRandonneurs(
   };
 }
 
-export async function deleteRandonneurById(id: number) {
+export async function deleteRandonneurById(id: string) {
   await db.delete(randonneurs).where(eq(randonneurs.id, id));
+}
+
+export async function getRandonneurByEmail(email: string): Promise<SelectRandonneur | null> {
+  const randonneur = await db.select()
+    .from(randonneurs)
+    .where(eq(randonneurs.email, email))
+    .limit(1)
+    .then(rows => rows[0] ?? null);
+  return randonneur;
+}
+
+export async function getRandonneurById(id: string): Promise<SelectRandonneur | null> {
+  const randonneur = await db.select()
+    .from(randonneurs)
+    .where(eq(randonneurs.id, id))
+    .limit(1)
+    .then(rows => rows[0] ?? null);
+  return randonneur;
+}
+
+export async function updateRandonneurPassword(userId:string, password: string) {
+  if (!userId || !password) return;
+  await db.update(randonneurs)
+    .set({ password: password })
+    .where(eq(randonneurs.id, userId))
+    .execute();
 }

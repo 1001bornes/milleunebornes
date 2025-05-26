@@ -1,14 +1,25 @@
-export function ProfileImage({ url_photo, nom, prenom }:
-    Readonly<{ url_photo: string; nom: string; prenom: string; }>) {
-    const lastNameInitial = nom ? nom[0] : "";
-    const firstNameInitial = prenom ? prenom[0] : "";
+import Image from 'next/image';
+export function ProfileImage({ url_photo, nom }:
+    Readonly<{ url_photo: string; nom: string; }>) {
+    const parts: string[] = nom ? nom.split(/[ -]/) : [];
+    const initials: string = parts.map(part => part[0].toUpperCase()).join("");
 
-    return url_photo ?
-        (<img width='auto' height={50} src={url_photo} alt={firstNameInitial + lastNameInitial} />)
-        : (
+    if (url_photo)
+        return (<Image
+            src={url_photo}
+            style={{
+                height: '50px',
+                width: 'auto',
+            }}
+            height={50}
+            width={50}
+            alt={initials}
+            className="overflow-hidden rounded-full" />
+        )
+    else
+        return (
             <span className="user-profile-image">
-                {firstNameInitial}
-                {lastNameInitial}
+                {initials}
             </span>
         );
 } 

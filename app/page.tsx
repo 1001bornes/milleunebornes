@@ -1,7 +1,10 @@
-'use server'
- 
+import React from "react"
 import { redirect } from 'next/navigation'
  
-export async function AppPage() {
-  redirect(`/randonneurs`) // Navigate to the new post page
+export default function AppPage() {
+  redirect('/randonnees') // Navigate to the randonnees page
+  return (
+    <>
+    </>
+  );
 }

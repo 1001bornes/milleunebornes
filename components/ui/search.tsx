@@ -27,7 +27,7 @@ export function SearchInput({searchTerm}:
       <Input
         name="q"
         type="search"
-        placeholder="Search..."
+        placeholder="Recherche..."
         defaultValue={previousSearchTerm}
         className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
       />

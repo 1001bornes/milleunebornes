@@ -6,12 +6,12 @@ import { Download } from "lucide-react";
 export function ExportRandonneurs({ filename, randonneurs }: Readonly<{ filename: string; randonneurs: SelectRandonneur[]; }>) {
   function createCsvContent(randonneurs: SelectRandonneur[]) {
     const csvContent = "data:text/csv;charset=utf-8," +
-      '"Nom","Prénom","No Tél"\n' +
+      '"Nom","No Tél","Email"\n' +
       randonneurs.map(randonneur =>
         [
           randonneur.nom,
-          randonneur.prenom,
-          randonneur.no_tel
+          randonneur.no_tel,
+          randonneur.email
         ]
           .map(str => str == null ? "" : `"${str.replace(/"/g, '"')}"`)
           .join(","))

@@ -21,6 +21,7 @@ import { PlusCircle } from 'lucide-react';
 import Pagination from '../pagination';
 import { ExportRandonnees } from './export-randonnees';
 import Link from 'next/link';
+import { isUserAnimateur } from "@/lib//auth"
 
 export async function RandonneesTable({ randonneesFilter, currentPage, randonneesPerPage }:
   Readonly<{ randonneesFilter: RandonneesFilter; currentPage: number; randonneesPerPage: number; }>) {
@@ -40,22 +41,24 @@ export async function RandonneesTable({ randonneesFilter, currentPage, randonnee
     <Card>
       <CardHeader>
         <div className="flex items-center">
-          <CardTitle className="text-transform: capitalize">{pageTitle}</CardTitle>
+          <CardTitle>Randonnées <span className="text-transform: lowercase">{pageTitle}</span></CardTitle>
           <SearchInput searchTerm={randonneesFilter.search ?? ''} />
           <div className="ml-auto flex items-center gap-2">
             <ExportRandonnees filename={pageTitle} randonnees={randonnees} />
-            <Link href="/randonnees/create" className="no-underline">
-              <Button size="sm" className="h-8 gap-1">
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                  Ajouter une randonnée
-                </span>
-              </Button>
-            </Link>
+            {(await isUserAnimateur()) &&
+              <Link href="/randonnees/create" className="no-underline">
+                <Button size="sm" className="h-8 gap-1">
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Ajouter une randonnée
+                  </span>
+                </Button>
+              </Link>
+            }
           </div>
         </div>
         <CardDescription>
-          Liste des {pageTitle}.
+          Liste des randonnées <span className="text-transform: lowercase">{pageTitle}</span>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -82,7 +85,7 @@ export async function RandonneesTable({ randonneesFilter, currentPage, randonnee
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          <strong> {randonnees.length}</strong> {pageTitle}
+          <strong> {randonnees.length}</strong> randonnées <span className="text-transform: lowercase">{pageTitle}</span>
         </div>
         <div className="ml-auto">
           <Pagination

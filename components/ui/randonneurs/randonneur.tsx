@@ -11,14 +11,18 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { SelectRandonneur } from '@/lib/randonneursDb';
 import { ProfileImage } from '@/components/ui/profile-image';
 
-export function Randonneur({ randonneur }: Readonly<{ randonneur: SelectRandonneur }>) {
+export function Randonneur({ randonneur, displayFonction }: Readonly<{ randonneur: SelectRandonneur; displayFonction?: boolean }>) {
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        <ProfileImage url_photo={randonneur.url_photo} nom={randonneur.nom} prenom={randonneur.prenom}/>
+        <ProfileImage url_photo={randonneur.image ?? randonneur.url_photo} nom={randonneur.nom} />
       </TableCell>
       <TableCell className="font-medium capitalize">{randonneur.nom}</TableCell>
-      <TableCell className="font-medium">{randonneur.prenom}</TableCell>
+      {displayFonction && (
+        <TableCell className="font-medium capitalize">
+          {randonneur.fonction_CA ? randonneur.fonction_CA : "Aucune fonction"}
+        </TableCell>
+      )}
       <TableCell className="font-medium">{randonneur.no_tel}</TableCell>
       <TableCell>
         <DropdownMenu>

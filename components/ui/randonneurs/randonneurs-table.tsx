@@ -19,16 +19,17 @@ import { getRandonneurs, RandonneursFilter } from '@/lib/randonneursDb';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { ExportRandonneurs } from './export-randonneurs';
+import { isUserAnimateur } from '@/lib/auth';
 
-export async function RandonneursTable({ randonneursFilter, currentPage,  randonneursPerPage } :
-  Readonly<{randonneursFilter: RandonneursFilter; currentPage: number; randonneursPerPage: number}>) {
-        const { randonneurs } = await getRandonneurs(
-          randonneursFilter,
-          currentPage,
-          randonneursPerPage
-        );
-      
-    
+export async function RandonneursTable({ randonneursFilter, currentPage, randonneursPerPage }:
+  Readonly<{ randonneursFilter: RandonneursFilter; currentPage: number; randonneursPerPage: number }>) {
+  const { randonneurs } = await getRandonneurs(
+    randonneursFilter,
+    currentPage,
+    randonneursPerPage
+  );
+
+
   function getPageTitle(typeRandonneurs: string) {
     switch (typeRandonneurs) {
       case 'CA':
@@ -48,15 +49,17 @@ export async function RandonneursTable({ randonneursFilter, currentPage,  randon
       <CardHeader>
         <div className="flex items-center">
           <CardTitle className="text-transform: capitalize">{pageTitle}</CardTitle>
-          <SearchInput searchTerm={randonneursFilter.search?? ''} />
+          <SearchInput searchTerm={randonneursFilter.search ?? ''} />
           <div className="ml-auto flex items-center gap-2">
             <ExportRandonneurs filename={pageTitle} randonneurs={randonneurs} />
-            <Button size="sm" className="h-8 gap-1">
-              <PlusCircle className="h-3.5 w-3.5" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Ajouter un randonneur
-              </span>
-            </Button>
+            {await isUserAnimateur() &&
+              (<Button size="sm" className="h-8 gap-1">
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  Ajouter un randonneur
+                </span>
+              </Button>
+              )}
           </div>
         </div>
         <CardDescription>
@@ -71,7 +74,9 @@ export async function RandonneursTable({ randonneursFilter, currentPage,  randon
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Nom</TableHead>
-              <TableHead>Prénom</TableHead>
+              {randonneursFilter.randonneurType === 'CA' &&
+                <TableHead>Fonction</TableHead>
+              }
               <TableHead className="hidden md:table-cell">Téléphone</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
@@ -80,7 +85,10 @@ export async function RandonneursTable({ randonneursFilter, currentPage,  randon
           </TableHeader>
           <TableBody>
             {randonneurs.map((randonneur) => (
-              <Randonneur key={randonneur.id} randonneur={randonneur} />
+              <Randonneur
+                key={randonneur.id}
+                randonneur={randonneur}
+                displayFonction={randonneursFilter.randonneurType === 'CA'} />
             ))}
           </TableBody>
         </Table>

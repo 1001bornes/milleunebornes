@@ -4,6 +4,7 @@ import { Home, Scale, Settings, Footprints, Users2, BadgeInfo } from 'lucide-rea
 import { NavItem } from '@/components/ui/nav-item';
 import Providers from '@/components/ui/providers';
 import Image from 'next/image';
+import { User } from '@/components/ui/user';
 
 export const metadata = {
   title: '1001 bornes',
@@ -19,12 +20,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <main className="flex min-h-screen w-full flex-col bg-muted/40">
             <DesktopNav />
             <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-              <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+              <header className="flex items-center gap-4 sticky top-0 z-30 h-14 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 content-stretch">
+                <div className="sm:gap-12 ">
+                  &nbsp;
+                </div>
                 <div className="text-4xl font-semibold leading-none tracking-tight text-center">
                   Mille et une bornes
                 </div>
                 {/* <MobileNav /> */}
-                {/* <User /> */}
+                <div className="ml-auto flex items-center gap-2">
+                  <User />
+                </div>
               </header>
               <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
                 {children}

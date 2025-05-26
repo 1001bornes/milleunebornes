@@ -15,7 +15,6 @@ function createRandonneesCsvContent(randonnees: SelectRandonnee[]) {
           .map(str => str == null ? "" : `"${str.replace(/"/g, '"')}"`)
           .join(","))
         .join("\n");
-    console.log(csvContent);
     return encodeURI(csvContent);
   }
 

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { auth, signOut } from '@/lib/auth';
+import { auth, signIn, signOut } from '@/lib/auth';
 import Image from 'next/image';
 import {
   DropdownMenu,
@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
 
 export async function User() {
   let session = await auth();
@@ -33,25 +32,33 @@ export async function User() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
-        <DropdownMenuSeparator />
         {user ? (
+          <>
+            <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Paramêtres</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <form
+                action={async () => {
+                  'use server';
+                  await signOut();
+                }}
+              >
+                <button type="submit">Déconnexion</button>
+              </form>
+            </DropdownMenuItem>
+          </>
+        ) : (
           <DropdownMenuItem>
             <form
               action={async () => {
                 'use server';
-                await signOut();
+                await signIn();
               }}
             >
-              <button type="submit">Sign Out</button>
+              <button type="submit">Connexion</button>
             </form>
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem>
-            <Link href="/login">Sign In</Link>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
