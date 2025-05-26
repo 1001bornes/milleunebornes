@@ -11,11 +11,12 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { SelectRandonneur } from '@/lib/randonneursDb';
 import { ProfileImage } from '@/components/ui/profile-image';
 
-export function Randonneur({ randonneur, displayFonction }: Readonly<{ randonneur: SelectRandonneur; displayFonction?: boolean }>) {
+export function Randonneur({ randonneur, displayFonction, role }
+  : Readonly<{ randonneur: SelectRandonneur; displayFonction?: boolean, role?: string }>) {
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
-        <ProfileImage url_photo={randonneur.image ?? randonneur.url_photo} nom={randonneur.nom} />
+        <ProfileImage url_photo={randonneur.image ?? randonneur.url_photo} nom={randonneur.nom} role={role} />
       </TableCell>
       <TableCell className="font-medium capitalize">{randonneur.nom}</TableCell>
       {displayFonction && (

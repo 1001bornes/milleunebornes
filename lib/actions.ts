@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from "next/cache";
-import { deleteRandonneeById, InsertRandonnee, insertRandonneeSchema, randonnees } from "./randonneesDb";
+import { deleteRandonneeById, InsertRandonnee, randonnees } from "./randonneesDb";
 import { db } from "./db";
 
 export async function deleteRandonnee(formData: FormData) {

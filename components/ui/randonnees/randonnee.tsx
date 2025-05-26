@@ -8,11 +8,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { SelectRandonnee } from '@/lib/randonneesDb';
+import { getRandonneeUsersId, SelectRandonnee } from '@/lib/randonneesDb';
 import Link from 'next/link';
 import { cn, formatDateToLocal } from '@/lib/utils';
+import { ProfileImage } from '../profile-image';
 
-export function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRandonnee }>) {
+export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRandonnee }>) {
+  let animateurs = await getRandonneeUsersId(randonnee.id, true);
   let distance_denivele = "";
   if (randonnee.distance_km) {
     distance_denivele = "(" + randonnee.distance_km + 'km' + (randonnee.denivele_m ? " " + randonnee.denivele_m + 'm' : "") + ")";
@@ -40,8 +42,12 @@ export function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRandonnee }
       </TableCell>
       <TableCell className="font-medium capitalize">{randonnee.description}</TableCell>
       <TableCell className="font-medium">
-        <Link href="/animateurs">
-        TODO animateurs
+        <Link href="/randonneurs?type=animateurs">
+          <span className="flex  overflow-auto gap-2">
+            {animateurs.map((animateur) => (
+              <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
+            ))}
+          </span>
         </Link>
       </TableCell>
       <TableCell className="font-medium">

@@ -11,7 +11,7 @@ import {
   boolean
 } from 'drizzle-orm/pg-core';
 import { eq, ilike, and, SQL, count, inArray } from 'drizzle-orm';
-import { createInsertSchema } from 'drizzle-zod';
+import { randonneurs, SelectRandonneurWithRole } from "./randonneursDb";
 
 export const statutsRando = pgEnum('statuts_rando',
   [
@@ -54,12 +54,27 @@ export const randonnees = pgTable('randonnees', {
 
 export type SelectRandonnee = typeof randonnees.$inferSelect;
 export type InsertRandonnee = typeof randonnees.$inferInsert;
-export const insertRandonneeSchema = createInsertSchema(randonnees);
+
+export const rolesRandonnees = pgEnum('roles_randonnee',
+  [
+    'Concepteur',
+    'Reconnaisseur',
+    'Participant'
+  ]);
+export const rolesRandonneesValues = rolesRandonnees.enumValues;
+export const randonneesUsers = pgTable('randonnees_users', {
+  randonnee_id: integer('randonnee_id').notNull()
+    .references(() => randonnees.id, { onDelete: 'cascade' }),
+  user_id: text('user_id').notNull()
+    .references(() => randonneurs.id, { onDelete: 'cascade' }),
+  role_randonnee: rolesRandonnees("role_randonnee").notNull()
+});
+
+export type SelectRandonneeUsers = typeof randonneesUsers.$inferSelect;
+export type InsertRandonneeUsers = typeof randonnees.$inferInsert;
+
 export async function getRandonnees(query: RandonneesFilter, pageNumber: number, randonneesPerPage: number):
-  Promise<{
-    randonnees: SelectRandonnee[];
-    totalPages: number;
-  }> {
+  Promise<{ randonnees: SelectRandonnee[]; totalPages: number; }> {
   const filters: SQL[] = [];
   if (query.search) filters.push(ilike(randonnees.description, `%${query.search}%`));
   if (query.randonneesStatuts.length > 0) {
@@ -107,3 +122,30 @@ function convertToStatutEnum(randonneesStatuts: string[]): import("drizzle-orm")
   });
 }
 
+export async function getRandonneeUsersId(randonneeId: number, onlyAnimateurs?: boolean): Promise<SelectRandonneurWithRole[]> {
+  const filters: SQL[] = [];
+  filters.push(eq(randonneesUsers.randonnee_id, randonneeId));
+  if (onlyAnimateurs) {
+    filters.push(inArray(randonneesUsers.role_randonnee, ['Concepteur', 'Reconnaisseur']));
+  }
+  const randonneeUsers = await db.select()
+    .from(randonneesUsers)
+    .where(and(...filters));
+  const actualRandonneeUsers = Promise.all(randonneeUsers.map(async (randonneeUserId) => {
+    let actualRandonneeUser = await db.select()
+      .from(randonneurs)
+      .where(eq(randonneurs.id, randonneeUserId.user_id))
+      .then(rows => rows[0] ?? null);
+    let randonneeUserWithRole: SelectRandonneurWithRole | null = null;
+    if (actualRandonneeUser) {
+      randonneeUserWithRole = {
+        ...actualRandonneeUser,
+        role: randonneeUserId.role_randonnee
+      }
+      return randonneeUserWithRole;
+    }
+  })
+
+  );
+  return (await actualRandonneeUsers).filter((randonneeUser) => randonneeUser !== null) as SelectRandonneurWithRole[];
+}

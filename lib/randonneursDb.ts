@@ -5,12 +5,9 @@ import {
   text,
   boolean,
   timestamp,
-  pgEnum,
-  serial
-} from 'drizzle-orm/pg-core';
+  pgEnum} from 'drizzle-orm/pg-core';
 import { eq, ilike, and, SQL } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
-import { SelectUser, users } from "./schema";
 
 export class RandonneursFilter {
   search: string | null;
@@ -47,6 +44,7 @@ export const randonneurs = pgTable('user', {
 });
 
 export type SelectRandonneur = typeof randonneurs.$inferSelect;
+export type SelectRandonneurWithRole = SelectRandonneur & { role: string }
 export const insertRandonneurSchema = createInsertSchema(randonneurs);
 export async function getRandonneurs(
   query: RandonneursFilter,
