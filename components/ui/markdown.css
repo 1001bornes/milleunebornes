@@ -48,10 +48,31 @@
   .MarkDown a {
     color: (internal value);
     text-decoration: underline;
-    cursor: auto;
+    cursor: pointer;
+  }
+
+  .MarkDown a:link {
+    color: (internal value);
+    text-decoration: underline;
+    cursor: pointer;
   }
 
 
+  .MarkDown a:visited {
+    color: (internal value);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .MarkDown a:link:active {
+    color: (internal value);
+  }
+
+  .MarkDown a:visited:active {
+    color: (internal value);
+  }
+
+  .M
   .MarkDown li {
     display: list-item;
   }

@@ -12,12 +12,19 @@ export default async function WhoAreWe() {
             <Tabs.Root defaultValue="association" orientation="vertical">
                 <Tabs.List aria-label="Qui sommes nous" className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
                     <Tabs.Trigger value="association" className={tabsStyle}>L'association</Tabs.Trigger>
-                    <Tabs.Trigger value="bureau-CA" className={tabsStyle}>Bureau et CA</Tabs.Trigger>
                     <Tabs.Trigger value="statuts" className={tabsStyle}>Les statuts</Tabs.Trigger>
                     <Tabs.Trigger value="assemblees-generales" className={tabsStyle}>Assemblées générales</Tabs.Trigger>
+                    <Tabs.Trigger value="bureau-CA" className={tabsStyle}>Bureau et CA</Tabs.Trigger>
+                    <Tabs.Trigger value="animateurs" className={tabsStyle}>Animateurs</Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content value="association" className={tabsContentStyle}>
                     <MarkdownPreview filename="public/qui-sommes-nous/association.md" />
+                </Tabs.Content>
+                <Tabs.Content value="statuts" className={tabsContentStyle}>
+                    <MarkdownPreview filename="public/qui-sommes-nous/statuts.md" />
+                </Tabs.Content>
+                <Tabs.Content value="assemblees-generales" className={tabsContentStyle}>
+                    <MarkdownPreview filename="public/qui-sommes-nous/assemblees-generales.md" />
                 </Tabs.Content>
                 <Tabs.Content value="bureau-CA" className={tabsContentStyle}>
                     <RandonneursTable
@@ -26,11 +33,12 @@ export default async function WhoAreWe() {
                         randonneursPerPage={10}
                     />
                 </Tabs.Content>
-                <Tabs.Content value="statuts" className={tabsContentStyle}>
-                    <MarkdownPreview filename="public/qui-sommes-nous/statuts.md" />
-                </Tabs.Content>
-                <Tabs.Content value="assemblees-generales" className={tabsContentStyle}>
-                    <MarkdownPreview filename="public/qui-sommes-nous/assemblees-generales.md" />
+                <Tabs.Content value="animateurs" className={tabsContentStyle}>
+                    <RandonneursTable
+                        randonneursFilter={{ randonneurType: 'animateurs', search: '' }}
+                        currentPage={1}
+                        randonneursPerPage={10}
+                    />
                 </Tabs.Content>
             </Tabs.Root>
         </main>
