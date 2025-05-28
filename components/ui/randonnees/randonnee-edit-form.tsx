@@ -1,6 +1,6 @@
 "use client";
-import { InsertRandonnee, SelectRandonnee } from "@/lib/randonneesDb";
-import { ChevronsDown, ChevronsUp, Link } from "lucide-react";
+import { SelectRandonnee } from "@/lib/randonneesDb";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Button } from "../button";
