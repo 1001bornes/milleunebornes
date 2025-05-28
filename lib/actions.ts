@@ -22,8 +22,6 @@ export async function deleteRandonnee(formData: FormData) {
 
 export async function createRandonnee(randonnee: InsertRandonnee) {
   "use server";
-  // Handle form submission logic here
-  console.log('Form data submitted:', randonnee);
   db.insert(randonnees).values(randonnee).execute();
   revalidatePath('/randonnees');
 }
