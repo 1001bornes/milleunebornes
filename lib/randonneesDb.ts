@@ -71,7 +71,7 @@ export const randonneesUsers = pgTable('randonnees_users', {
 });
 
 export type SelectRandonneeUsers = typeof randonneesUsers.$inferSelect;
-export type InsertRandonneeUsers = typeof randonnees.$inferInsert;
+export type InsertRandonneeUsers = typeof randonneesUsers.$inferInsert;
 
 export async function getRandonnees(query: RandonneesFilter, pageNumber: number, randonneesPerPage: number):
   Promise<{ randonnees: SelectRandonnee[]; totalPages: number; }> {
@@ -114,12 +114,30 @@ export async function getRandonnees(query: RandonneesFilter, pageNumber: number,
 export async function deleteRandonneeById(id: number) {
   await db.delete(randonnees).where(eq(randonnees.id, id));
 }
-function convertToStatutEnum(randonneesStatuts: string[]): import("drizzle-orm").SQLWrapper | ("A concevoir" | "A reconnaître" | "Programmée" | "Terminée" | import("drizzle-orm").Placeholder<string, any>)[] {
+
+function convertToStatutEnum(randonneesStatuts: string[])
+: import("drizzle-orm").SQLWrapper | ("A concevoir" | "A reconnaître" | "Programmée" | "Terminée" | import("drizzle-orm").Placeholder<string, any>)[] {
   return randonneesStatuts.map((statut) => {
     if (statutsRandoValues.includes(statut as any)) {
       return statut as any;
     }
   });
+}
+
+export function convertToRoleRandonneesEnum(rolesRandonnees: string[])
+: ("Concepteur" | "Reconnaisseur" | "Participant")[] {
+  return rolesRandonnees.map((roleRandonnees) => {
+    if (rolesRandonneesValues.includes(roleRandonnees as any)) {
+      return roleRandonnees as any;
+    }
+  });
+}
+
+export async function getRandonneeById(randonneeId: number): Promise<SelectRandonnee> {
+  return await db.select()
+  .from(randonnees)
+  .where(eq(randonnees.id, randonneeId))
+  .then(rows => rows[0] ?? null);
 }
 
 export async function getRandonneeUsersId(randonneeId: number, onlyAnimateurs?: boolean): Promise<SelectRandonneurWithRole[]> {

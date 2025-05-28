@@ -1,11 +1,16 @@
 "use client";
-import { InsertRandonnee } from "@/lib/randonneesDb";
-import { ChevronsDown, ChevronsUp } from "lucide-react";
+import { InsertRandonnee, SelectRandonnee } from "@/lib/randonneesDb";
+import { ChevronsDown, ChevronsUp, Link } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Button } from "../button";
+import { SelectRandonneur, SelectRandonneurWithRole } from "@/lib/randonneursDb";
+import { ProfileImage } from "../profile-image";
+import { RandonneursSelect } from "../randonneurs/randonneurs-select";
+import { updateRandonneeAnimateurs } from "@/lib/actions";
 
-const defaultValues: InsertRandonnee = {
+const defaultValues: SelectRandonnee = {
+    id: 0,
     description: "",
     create_time: new Date(), // Default to current date and time
     statut: "A concevoir",
@@ -24,15 +29,22 @@ const defaultValues: InsertRandonnee = {
     note_speciale: "",
 };
 
-export default function RandonneeCreateForm({
-    initialValues = defaultValues,
+export default function RandonneeEditForm({
+    randonnee,
+    allAnimateurs,
+    animateurs,
     onSubmit,
 }: Readonly<{
-    initialValues?: InsertRandonnee;
-    onSubmit?: (values: InsertRandonnee) => void;
+    randonnee?: SelectRandonnee;
+    allAnimateurs: SelectRandonneur[];
+    animateurs: SelectRandonneurWithRole[];
+    onSubmit?: (values: SelectRandonnee) => void;
 }>) {
-    const [form, setForm] = useState<InsertRandonnee>(initialValues);
+    const [form, setForm] = useState<SelectRandonnee>(randonnee ?? defaultValues);
     const [showMoreFields, setShowMoreFields] = useState(false);
+
+    let concepteurs = animateurs.filter((animateur) => animateur.role === 'Concepteur');
+    let reconnaisseurs = animateurs.filter((animateur) => animateur.role === 'Reconnaisseur');
 
     const router = useRouter();
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
@@ -43,8 +55,7 @@ export default function RandonneeCreateForm({
         }));
     }
 
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
+    function handleSubmit(formData: FormData) {
         if (onSubmit) {
             onSubmit(form);
         }
@@ -52,7 +63,7 @@ export default function RandonneeCreateForm({
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+        <div className="space-y-4 max-w-xl">
             <div>
                 <label htmlFor="description">Description</label>
                 <textarea id="description" name="description" value={form.description} onChange={handleChange} required className="w-full border rounded p-2" />
@@ -88,13 +99,41 @@ export default function RandonneeCreateForm({
                 <label htmlFor="id_openrunner">ID Openrunner</label>
                 <input type="number" id="id_openrunner" name="id_openrunner" value={form.id_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
             </div>
+                {randonnee?.id && (
+                    <>
+                        <span className="flex  overflow-auto gap-2 align-middle">
+                            Concepteur:
+                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={concepteurs}
+                                typeRandonneur="Concepteur"
+                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                            <span className="flex  overflow-auto gap-2">
+                                {concepteurs.map((animateur) => (
+                                    <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
+                                ))}
+                            </span>
+                        </span>
+                        <span className="flex  overflow-auto gap-2 align-middle">
+                            Reconnaisseur(s):
+                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={reconnaisseurs}
+                                typeRandonneur="Reconnaisseur"
+                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                            <span className="flex  overflow-auto gap-2">
+                                {reconnaisseurs.map((animateur) => (
+                                    <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
+                                ))}
+                            </span>
+                        </span>
+                    </>
+                )}
             <Button type="button" onClick={() => setShowMoreFields(!showMoreFields)} className="py-2 px-4 border border-gray-400 rounded shadow">
                 {showMoreFields ?
                     (<>
                         <span>Masquer</span>
                         <ChevronsUp className="ml-auto h-5 w-5 text-gray-50" />
                     </>)
-                :
+                    :
                     (<>
                         <span>Afficher</span>
                         <ChevronsDown className="ml-auto h-5 w-5 text-gray-50" />
@@ -135,8 +174,8 @@ export default function RandonneeCreateForm({
             </div>
             <div className="flex justify-end space-x-2">
                 <button type="button" className="bg-red-600 text-white px-4 py-2 rounded" onClick={() => router.back()}>Annuler</button>
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
+                <button type="submit" formAction={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
             </div>
-        </form>
+        </div>
     );
 }

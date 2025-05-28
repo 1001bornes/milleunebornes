@@ -14,6 +14,7 @@ import { cn, formatDateToLocal } from '@/lib/utils';
 import { ProfileImage } from '../profile-image';
 
 export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRandonnee }>) {
+
   let animateurs = await getRandonneeUsersId(randonnee.id, true);
   let distance_denivele = "";
   if (randonnee.distance_km) {
@@ -66,7 +67,7 @@ export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRando
       <TableCell className={cn(classLieuDepart)}>
         {randonnee.lieu_depart}
       </TableCell>
-      <TableCell>
+      <TableCell >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button aria-haspopup="true" size="icon" variant="ghost">
@@ -76,13 +77,11 @@ export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRando
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            {/* <DropdownMenuItem>
-              <form action={deleteRandonnee}>
-                <input type="hidden" name="id" value={randonnee.id} />
-                <button type="submit">Delete</button>
-              </form>
-            </DropdownMenuItem> */}
+            <DropdownMenuItem>
+              <Link href={'/randonnees/' + randonnee.id}>
+                <span>Edit</span>
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>

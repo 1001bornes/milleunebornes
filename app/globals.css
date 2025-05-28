@@ -76,11 +76,26 @@
   }
 
   .user-profile-image {
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 50%;
+  }
+
+  .user-profile-image img {
+    height: 50px;
+    width: 50px;
+  }
+  
+  .user-profile-image span {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 50px;
     height: 50px;
+    overflow: hidden;
+    position: relative;
     background-color: brown;
     color: #ffffff;
     font-size: 15px;

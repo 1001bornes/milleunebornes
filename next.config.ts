@@ -1,5 +1,6 @@
 export default {
-   async redirects() {
+  reactStrictMode: false,
+  async redirects() {
     return [
       // // Basic redirect
       // {

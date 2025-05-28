@@ -78,9 +78,6 @@ export async function RandonneursTable({ randonneursFilter, currentPage, randonn
                 <TableHead>Fonction</TableHead>
               }
               <TableHead className="hidden md:table-cell">Téléphone</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,6 +85,7 @@ export async function RandonneursTable({ randonneursFilter, currentPage, randonn
               <Randonneur
                 key={randonneur.id}
                 randonneur={randonneur}
+                selected={false}
                 displayFonction={randonneursFilter.randonneurType === 'CA'} />
             ))}
           </TableBody>
