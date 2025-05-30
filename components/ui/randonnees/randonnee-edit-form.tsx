@@ -99,34 +99,35 @@ export default function RandonneeEditForm({
                 <label htmlFor="id_openrunner">ID Openrunner</label>
                 <input type="number" id="id_openrunner" name="id_openrunner" value={form.id_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
             </div>
-                {randonnee?.id && (
-                    <>
-                        <span className="flex  overflow-auto gap-2 align-middle">
-                            Concepteur:
-                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={concepteurs}
-                                typeRandonneur="Concepteur"
-                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
-                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
-                            <span className="flex  overflow-auto gap-2">
-                                {concepteurs.map((animateur) => (
-                                    <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
-                                ))}
-                            </span>
+            {randonnee?.id && (
+                <>
+                    <span className="flex  overflow-auto gap-2 items-center">
+                        <span>Concepteur:</span>
+                        <span className="flex  overflow-auto gap-2">
+                            {concepteurs.map((animateur) => (
+                                <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
+                            ))}
                         </span>
-                        <span className="flex  overflow-auto gap-2 align-middle">
-                            Reconnaisseur(s):
-                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={reconnaisseurs}
-                                typeRandonneur="Reconnaisseur"
-                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
-                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
-                            <span className="flex  overflow-auto gap-2">
-                                {reconnaisseurs.map((animateur) => (
-                                    <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
-                                ))}
-                            </span>
+                        <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={concepteurs}
+                            typeRandonneur="Concepteur"
+                            action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+
+                    </span>
+                    <span className="flex  overflow-auto gap-2 items-center">
+                        <span>Reconnaisseur(s):</span>
+                        <span className="flex  overflow-auto gap-2">
+                            {reconnaisseurs.map((animateur) => (
+                                <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
+                            ))}
                         </span>
-                    </>
-                )}
+                        <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={reconnaisseurs}
+                            typeRandonneur="Reconnaisseur"
+                            action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                    </span>
+                </>
+            )}
             <Button type="button" onClick={() => setShowMoreFields(!showMoreFields)} className="py-2 px-4 border border-gray-400 rounded shadow">
                 {showMoreFields ?
                     (<>
