@@ -65,15 +65,13 @@ export async function RandonneesTable({ randonneesFilter, currentPage, randonnee
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead/>
               <TableHead>Rendez-vous</TableHead>
               <TableHead>Type de randonnée</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Animateurs</TableHead>
               <TableHead>Parcours OpenRunner</TableHead>
               <TableHead>Lieu du rendez-vous</TableHead>
-              <TableHead>
-                <span className="sr-only">Actions</span>
-              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

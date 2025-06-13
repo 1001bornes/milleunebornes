@@ -1,12 +1,5 @@
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { getRandonneeUsersId, SelectRandonnee } from '@/lib/randonneesDb';
 import Link from 'next/link';
@@ -29,6 +22,13 @@ export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRando
     classLieuDepart += " text-red-500";
   return (
     <TableRow>
+      <TableCell>
+        <Link href={`/randonnees/${randonnee.id}`} className="no-underline">
+          <Button size="sm" className="h-8 gap-1">
+            <Eye className="h-3.5 w-3.5" />
+          </Button>
+        </Link>
+      </TableCell>
       <TableCell className={cn(classDateProgrammation)}>{formatDateToLocal(randonnee.programmation_time)}</TableCell>
       <TableCell className="font-medium">
         {typeRandonnee}
@@ -66,24 +66,6 @@ export async function Randonnee({ randonnee }: Readonly<{ randonnee: SelectRando
       </TableCell>
       <TableCell className={cn(classLieuDepart)}>
         {randonnee.lieu_depart}
-      </TableCell>
-      <TableCell >
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button aria-haspopup="true" size="icon" variant="ghost">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Link href={'/randonnees/' + randonnee.id}>
-                <span>Edit</span>
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </TableCell>
     </TableRow>
   );

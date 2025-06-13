@@ -34,11 +34,13 @@ export default function RandonneeEditForm({
     allAnimateurs,
     animateurs,
     onSubmit,
+    isAnimateur,
 }: Readonly<{
     randonnee?: SelectRandonnee;
     allAnimateurs: SelectRandonneur[];
     animateurs: SelectRandonneurWithRole[];
     onSubmit?: (values: SelectRandonnee) => void;
+    isAnimateur: boolean;
 }>) {
     const [form, setForm] = useState<SelectRandonnee>(randonnee ?? defaultValues);
     const [showMoreFields, setShowMoreFields] = useState(false);
@@ -66,15 +68,15 @@ export default function RandonneeEditForm({
         <div className="space-y-4 max-w-xl">
             <div>
                 <label htmlFor="description">Description</label>
-                <textarea id="description" name="description" value={form.description} onChange={handleChange} required className="w-full border rounded p-2" />
+                <textarea id="description" name="description" value={form.description} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} />
             </div>
             <div hidden={true}>
                 <label htmlFor="create_time">Date de création</label>
-                <input type="datetime-local" id="create_time" name="create_time" value={form.create_time?.toISOString().slice(0, 16)} onChange={handleChange} required className="w-full border rounded p-2" />
+                <input type="datetime-local" id="create_time" name="create_time" value={form.create_time?.toISOString().slice(0, 16)} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} />
             </div>
             <div hidden={true}>
                 <label htmlFor="statut">Statut</label>
-                <select id="statut" name="statut" value={form.statut} onChange={handleChange} required className="w-full border rounded p-2">
+                <select id="statut" name="statut" value={form.statut} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} >
                     <option value="A concevoir">A concevoir</option>
                     <option value="A reconnaître">A reconnaître</option>
                     <option value="Programmée">Programmée</option>
@@ -83,21 +85,21 @@ export default function RandonneeEditForm({
             </div>
             <div>
                 <label htmlFor="reconnaissance_time">Date de reconnaissance</label>
-                <input type="datetime-local" id="reconnaissance_time" name="reconnaissance_time" value={form.reconnaissance_time?.toISOString().slice(0, 16)} onChange={handleChange} className="w-full border rounded p-2" />
+                <input type="datetime-local" id="reconnaissance_time" name="reconnaissance_time" value={form.reconnaissance_time?.toISOString().slice(0, 16)} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
             </div>
             <div>
                 <label htmlFor="programmation_time">Date de programmation</label>
-                <input type="datetime-local" id="programmation_time" name="programmation_time" value={form.programmation_time?.toISOString().slice(0, 16)} onChange={handleChange} className="w-full border rounded p-2" />
+                <input type="datetime-local" id="programmation_time" name="programmation_time" value={form.programmation_time?.toISOString().slice(0, 16)} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 <label htmlFor="is_programmation_speciale">Programmation spéciale ? </label>
-                <input type="checkbox" id="is_programmation_speciale" name="is_programmation_speciale" checked={!!form.is_programmation_speciale} onChange={handleChange} />
+                <input type="checkbox" id="is_programmation_speciale" name="is_programmation_speciale" checked={!!form.is_programmation_speciale} onChange={handleChange} disabled={!isAnimateur} />
             </div>
             <div>
                 <label htmlFor="localisation">Localisation</label>
-                <input id="localisation" name="localisation" value={form.localisation ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                <input id="localisation" name="localisation" value={form.localisation ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
             </div>
             <div>
                 <label htmlFor="id_openrunner">ID Openrunner</label>
-                <input type="number" id="id_openrunner" name="id_openrunner" value={form.id_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                <input type="number" id="id_openrunner" name="id_openrunner" value={form.id_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
             </div>
             {randonnee?.id && (
                 <>
@@ -108,11 +110,12 @@ export default function RandonneeEditForm({
                                 <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
                             ))}
                         </span>
-                        <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={concepteurs}
-                            typeRandonneur="Concepteur"
-                            action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
-                                updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
-
+                        {!isAnimateur &&
+                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={concepteurs}
+                                typeRandonneur="Concepteur"
+                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                        }
                     </span>
                     <span className="flex  overflow-auto gap-2 items-center">
                         <span>Reconnaisseur(s):</span>
@@ -121,10 +124,12 @@ export default function RandonneeEditForm({
                                 <ProfileImage key={animateur.id} url_photo={animateur.image ?? animateur.url_photo} nom={animateur.nom} role={animateur.role} />
                             ))}
                         </span>
-                        <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={reconnaisseurs}
-                            typeRandonneur="Reconnaisseur"
-                            action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
-                                updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                        {!isAnimateur &&
+                            <RandonneursSelect randonneeId={randonnee.id} randonneurs={allAnimateurs} initialSelected={reconnaisseurs}
+                                typeRandonneur="Reconnaisseur"
+                                action={(randonneeId, typeRandonneur, selectedRandonneurs) =>
+                                    updateRandonneeAnimateurs(randonneeId, typeRandonneur, selectedRandonneurs)} />
+                        }
                     </span>
                 </>
             )}
@@ -144,38 +149,40 @@ export default function RandonneeEditForm({
             <div hidden={!showMoreFields}>
                 <div>
                     <label htmlFor="lieu_depart">Lieu de départ</label>
-                    <input id="lieu_depart" name="lieu_depart" value={form.lieu_depart} onChange={handleChange} required className="w-full border rounded p-2" />
+                    <input id="lieu_depart" name="lieu_depart" value={form.lieu_depart} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} />
                     <label htmlFor="is_lieu_depart_special">Lieu de départ spécial ? </label>
-                    <input type="checkbox" id="is_lieu_depart_special" name="is_lieu_depart_special" checked={!!form.is_lieu_depart_special} onChange={handleChange} />
+                    <input type="checkbox" id="is_lieu_depart_special" name="is_lieu_depart_special" checked={!!form.is_lieu_depart_special} onChange={handleChange} disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="cout_euros">Coût (€)</label>
-                    <input type="number" step="0.01" id="cout_euros" name="cout_euros" value={form.cout_euros ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <input type="number" step="0.01" id="cout_euros" name="cout_euros" value={form.cout_euros ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="distance_km">Distance (km)</label>
-                    <input type="number" id="distance_km" name="distance_km" value={form.distance_km ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <input type="number" id="distance_km" name="distance_km" value={form.distance_km ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="denivele_m">Dénivelé (m)</label>
-                    <input type="number" id="denivele_m" name="denivele_m" value={form.denivele_m ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <input type="number" id="denivele_m" name="denivele_m" value={form.denivele_m ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="type_rando">Type de rando</label>
-                    <input id="type_rando" name="type_rando" value={form.type_rando ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <input id="type_rando" name="type_rando" value={form.type_rando ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="parcours_openrunner">URL parcours Openrunner</label>
-                    <input id="parcours_openrunner" name="parcours_openrunner" value={form.parcours_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <input id="parcours_openrunner" name="parcours_openrunner" value={form.parcours_openrunner ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
                 <div>
                     <label htmlFor="note_speciale">Note spéciale</label>
-                    <textarea id="note_speciale" name="note_speciale" value={form.note_speciale ?? ""} onChange={handleChange} className="w-full border rounded p-2" />
+                    <textarea id="note_speciale" name="note_speciale" value={form.note_speciale ?? ""} onChange={handleChange} className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
             </div>
             <div className="flex justify-end space-x-2">
                 <button type="button" className="bg-red-600 text-white px-4 py-2 rounded" onClick={() => router.back()}>Annuler</button>
-                <button type="submit" formAction={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded">Créer</button>
+                {!isAnimateur &&
+                    <button type="submit" formAction={handleSubmit} className="bg-blue-600 text-white px-4 py-2 rounded" >Créer</button>
+                }
             </div>
         </div>
     );
