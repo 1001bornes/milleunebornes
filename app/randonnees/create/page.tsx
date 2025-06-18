@@ -1,4 +1,4 @@
-import RandonneeEditForm from "@/components/ui/randonnees/randonnee-edit-form";
+import RandonneeCreateForm from "@/components/ui/randonnees/randonnee-create-form";
 import { createRandonnee } from "@/lib/actions";
 import { getRandonneurs, RandonneursFilter, SelectRandonneurWithRole } from "@/lib/randonneursDb";
 
@@ -13,7 +13,7 @@ export default async function CreateRandonneePage() {
     return (
         <div>
             <h1 className="text-2xl font-bold mb-4">Création d'une nouvelle randonnée ȧ concevoir</h1>
-            <RandonneeEditForm allAnimateurs={allAnimateurs} animateurs={animateurs} onSubmit={(randonnee) => createRandonnee(randonnee)} />
+            <RandonneeCreateForm allAnimateurs={allAnimateurs} animateurs={animateurs} isAnimateur={true}/>
         </div>
     );
 }

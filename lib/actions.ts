@@ -33,12 +33,9 @@ export async function updateRandonneeAnimateurs(randonneeId: number, typeRandonn
   const prevAnimateurs = new Map((await getRandonneeUsersId(randonneeId, true))
     .filter(randonneur => randonneur.role === typeRandonneur)
     .map(randonneur => [randonneur.id, randonneur] as const));
-  console.log("prevAnimateurs", prevAnimateurs);
   const newAnimateurs = new Map(randonneurs.map(randonneur => [randonneur.id, randonneur] as const));
-  console.log("newAnimateurs", newAnimateurs);
   const deletedAnimateurs = prevAnimateurs.keys().filter(prevAnimateurId => newAnimateurs.has(prevAnimateurId) === false);
   deletedAnimateurs.forEach(randonneurId => {
-    console.log("deletedAnimateurs", randonneurId, typeRandonneurEnum);
     db.delete(randonneesUsers)
       .where(and(
         eq(randonneesUsers.randonnee_id, randonneeId),
@@ -46,10 +43,8 @@ export async function updateRandonneeAnimateurs(randonneeId: number, typeRandonn
         eq(randonneesUsers.role_randonnee, typeRandonneurEnum)))
       .execute();
   });
-  const addeedAnimateurs = newAnimateurs.values().filter(newAnimateur => !prevAnimateurs.has(newAnimateur.id));
-  console.log("addedAnimateurs", addeedAnimateurs);
-  addeedAnimateurs.forEach(randonneur => {
-    console.log("addedAnimateurs", randonneur);
+  const addedAnimateurs = newAnimateurs.values().filter(newAnimateur => !prevAnimateurs.has(newAnimateur.id));
+  addedAnimateurs.forEach(randonneur => {
     let randonneeUser: InsertRandonneeUsers = {
       randonnee_id: randonneeId,
       user_id: randonneur.id,
