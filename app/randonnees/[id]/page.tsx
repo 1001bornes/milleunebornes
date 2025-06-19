@@ -1,8 +1,8 @@
-import RandonneeEditForm from "@/components/ui/randonnees/randonnee-edit-form";
 import { Tabs } from "radix-ui";
 import { isUserAnimateur } from "@/lib/auth";
 import { getRandonneeById, getRandonneeUsersId } from "@/lib/randonneesDb";
 import { getRandonneurs, RandonneursFilter } from "@/lib/randonneursDb";
+import RandonneeUpdateForm from "@/components/ui/randonnees/randonnee-update-form";
 
 export default async function EditRandonneePage(props: Readonly<{ params: Promise<{ id: number }> }>) {
     const params = await props.params;
@@ -31,7 +31,7 @@ export default async function EditRandonneePage(props: Readonly<{ params: Promis
             </Tabs.List>
             {isAnimateur &&
                 <Tabs.Content value="randonnee" className={tabsContentStyle}>
-                    <RandonneeEditForm randonnee={randonnee} allAnimateurs={allAnimateurs} animateurs={animateurs} isAnimateur={isAnimateur}></RandonneeEditForm>
+                    <RandonneeUpdateForm randonnee={randonnee} allAnimateurs={allAnimateurs} animateurs={animateurs} isAnimateur={isAnimateur}></RandonneeUpdateForm>
                 </Tabs.Content>
             }
             <Tabs.Content value="participants" className={tabsContentStyle}>

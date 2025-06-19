@@ -8,7 +8,8 @@ import {
   InsertRandonnee,
   InsertRandonneeUsers,
   randonnees,
-  randonneesUsers
+  randonneesUsers,
+  SelectRandonnee
 } from "./randonneesDb";
 import { db } from "./db";
 import { SelectRandonneur } from "./randonneursDb";
@@ -23,6 +24,17 @@ export async function deleteRandonnee(formData: FormData) {
 export async function createRandonnee(randonnee: InsertRandonnee) {
   "use server";
   db.insert(randonnees).values(randonnee).execute();
+  revalidatePath('/randonnees');
+}
+
+export async function updateRandonnee(randonnee: SelectRandonnee) {
+  "use server";
+  let randonneeId = randonnee.id;
+  const { id: _, ...randonneeValues } = randonnee
+  db.update(randonnees)
+    .set(randonneeValues)
+    .where(eq(randonnees.id, randonneeId))
+    .execute();
   revalidatePath('/randonnees');
 }
 

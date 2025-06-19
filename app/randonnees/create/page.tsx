@@ -1,5 +1,4 @@
 import RandonneeCreateForm from "@/components/ui/randonnees/randonnee-create-form";
-import { createRandonnee } from "@/lib/actions";
 import { getRandonneurs, RandonneursFilter, SelectRandonneurWithRole } from "@/lib/randonneursDb";
 
 export default async function CreateRandonneePage() {

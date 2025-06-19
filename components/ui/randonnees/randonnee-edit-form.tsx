@@ -84,7 +84,7 @@ export default function RandonneeEditForm({
                     <label htmlFor="create_time">Date de création</label>
                     <input type="datetime-local" id="create_time" name="create_time" value={form.create_time?.toISOString().slice(0, 16)} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} />
                 </div>
-                <div hidden={true}>
+                <div>
                     <label htmlFor="statut">Statut</label>
                     <select id="statut" name="statut" value={form.statut} onChange={handleChange} required className="w-full border rounded p-2" disabled={!isAnimateur} >
                         <option value="A concevoir">A concevoir</option>
@@ -191,7 +191,7 @@ export default function RandonneeEditForm({
                 <div className="flex justify-end space-x-2">
                     <button type="button" className="bg-red-600 text-white px-4 py-2 rounded" onClick={() => router.back()}>Annuler</button>
                     {isAnimateur &&
-                        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" >{randonnee ? "Modifier": "Créer"}</button>
+                        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" >{randonnee ? "Modifier" : "Créer"}</button>
                     }
                 </div>
             </div>

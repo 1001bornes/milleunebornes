@@ -22,6 +22,7 @@ export const statutsRando = pgEnum('statuts_rando',
   ]);
 
 export const statutsRandoValues = statutsRando.enumValues;
+export type StatutRando = typeof statutsRandoValues[number];
 export class RandonneesFilter {
   search: string | null;
   randonneesStatuts: string[];
